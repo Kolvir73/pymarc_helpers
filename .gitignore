@@ -1,0 +1,4 @@
+tests/testoutput
+build
+dist
+mangle_marc.egg-info
