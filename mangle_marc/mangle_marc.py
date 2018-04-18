@@ -50,7 +50,7 @@ def getstats(record_list, filename=None):
                 fieldstat[field.tag] = fieldstat.get(field.tag, [0, []])
                 fieldstat[field.tag][0] += 1
             else:
-                tag = field.tag + field.indicators[0].replace(" ", "#") + field.indicators[0].replace(" ", "#")
+                tag = field.tag + field.indicators[0].replace(" ", "#") + field.indicators[1].replace(" ", "#")
                 fieldstat[tag] = fieldstat.get(tag, [0, []])
                 fieldstat[tag][0] += 1
                 subfields = field.subfields
@@ -83,10 +83,13 @@ def write_to_file(reclist, filename="output", form="bin"):
                 out.write(record.as_marc())
     elif form is "xml":
         filename = filename + ".xml"
-        with open(filename, "wb") as out:
-            for record in reclist:
-                pass
-
+        header = b"""<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="MARC21slim2HTML.xsl" ?>
+<collection xmlns="http://www.loc.gov/MARC21/slim"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.loc.gov/MARC21/slim
+    http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">"""
+        pass
 
 def process_data(data, process_function, test=False, output_format="bin"):
     """takes an infile and a function as arguments. process_function has to take a
@@ -107,7 +110,7 @@ def process_data(data, process_function, test=False, output_format="bin"):
         instats = "TEST_infile_stats.txt"
         outstats = "TEST_outfile_stats.txt"
     else:
-        reclist = batch_to_list(infile)
+        reclist = batch_to_list(data)
         outfile = "loadfile"
         instats = "infile_stats.txt"
         outstats = "outfile_stats.txt"
