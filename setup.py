@@ -7,7 +7,7 @@ config = {
     'description': "stuff to mangle MARC",
     'author': "Stefan Schuh",
     'author_email': "stefan.schuh@uni-graz.at",
-    'version': "0.1",
+    'version': "0.2",
     'install_requires': ['pytest', 'pymarc', 'texttable'],
     'packages': ["mangle_marc"],
     'scripts': [],

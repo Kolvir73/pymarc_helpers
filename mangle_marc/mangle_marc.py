@@ -7,7 +7,6 @@ import texttable as TT
 bindata = "tests/testdata/bindata.mrc"
 xmldata = "tests/testdata/xmldata.xml"
 
-
 def batch_to_list(infile):
     record_list = []
     with open(infile, "rb") as fh:
@@ -76,12 +75,12 @@ def getstats(record_list, filename=None):
 
 def write_to_file(reclist, filename="output", form="bin"):
     """write records to file"""
-    if form is "bin":
+    if form == "bin":
         filename = filename + ".mrc"
         with open(filename, "wb") as out:
             for record in reclist:
                 out.write(record.as_marc())
-    elif form is "xml":
+    elif form == "xml":
         filename = filename + ".xml"
         header = b"""<?xml version="1.0" encoding="UTF-8" ?>
 <?xml-stylesheet type="text/xsl" href="MARC21slim2HTML.xsl" ?>
@@ -89,13 +88,55 @@ def write_to_file(reclist, filename="output", form="bin"):
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.loc.gov/MARC21/slim
     http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">"""
-        pass
+        closer = b"</collection>"
+
+        with open(filename, "w", encoding="utf-8", errors="replace") as out:
+            for record in reclist:
+                out.write(pymarc.record_to_xml(record))
+
+def change_control_field(field, pos, value):
+    """Changes values in a control field"""
+    if field.is_control_field() == False:
+        print(f"{field} is not a control Field")
+        # TODO Exception
+        return
+
+    field.data = change_control_data(field.data)
+def change_control_data(data, pos, value):
+    """Change some values in fixed-field-string"""
+    positions = pos.split("-")
+    if len(positions) > 2:
+        # TODO exception
+        return
+    # TODO checken, ob len(data) == endpos - startpos + 1
+    startpos = positions[0]
+    endpos = positions[-1]
+    outdata = field.data[:startpos] + value + field.data[endpos + 1:]
+
+def sort_subfields(subfields):
+    """Return a sorted list of subfields.
+
+    Takes a list as input. The list has to have the form
+    ["code", "value", "code", "value"] eg.
+    ['a', 'titel', 'c', 'verantwortlichkeitsangabe', 'b', 'zusatz']
+
+    """
+    sorted_subfields = []
+    # make a list of (code, value)-tuples
+    tuple_list = [(subfields[i], subfields[i + 1]) for i in range(0, len(subfields), 2)]
+
+    # sort the tuple list and append to sorted subfields
+    for code, value in sorted(tuple_list):
+        sorted_subfields.append(code)
+        sorted_subfields.append(value)
+
+    return sorted_subfields
 
 def process_data(data, process_function, test=False, output_format="bin"):
     """takes an infile and a function as arguments. process_function has to take a
     record as input and return the modified record.
     """
-
+    outlist = []
     # check if data is a list or a filename. If it's not a list,
     # create one from the file
     if type(data) is list:
@@ -110,7 +151,6 @@ def process_data(data, process_function, test=False, output_format="bin"):
         instats = "TEST_infile_stats.txt"
         outstats = "TEST_outfile_stats.txt"
     else:
-        reclist = batch_to_list(data)
         outfile = "loadfile"
         instats = "infile_stats.txt"
         outstats = "outfile_stats.txt"
@@ -119,10 +159,11 @@ def process_data(data, process_function, test=False, output_format="bin"):
     getstats(reclist, instats)
     # process each record in the list and append it to outlist
     for record in reclist:
-        process_function(record)
+        outlist.append(process_function(record))
+
+    write_to_file(outlist, filename=outfile, form=output_format)
 
     # stats after processing
-    getstats(reclist, outstats)
-
-    write_to_file(reclist, filename=outfile, form=output_format)
+    # FIXME Don't hardcode file extension here
+    getstats(batch_to_list(outfile + ".mrc"), outstats)
 
