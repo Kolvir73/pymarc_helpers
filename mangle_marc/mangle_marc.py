@@ -102,6 +102,7 @@ def change_control_field(field, pos, value):
         return
 
     field.data = change_control_data(field.data)
+
 def change_control_data(data, pos, value):
     """Change some values in fixed-field-string"""
     positions = pos.split("-")
@@ -131,6 +132,23 @@ def sort_subfields(subfields):
         sorted_subfields.append(value)
 
     return sorted_subfields
+
+def remove_isbd(field):
+    """Remove ISBD-punctuation at the end of the subfields.
+
+    Takes a field object and changes it in-place"""
+
+    isbd_chars = (".", ",", ":", ";", "/")
+    inlist = field.subfields
+    outlist = []
+
+    for subfield in inlist:
+        if subfield.endswith(isbd_chars):
+            outlist.append(subfield[:-1].rstrip())
+        else:
+            outlist.append(subfield)
+
+    field.subfields = outlist
 
 def process_data(data, process_function, test=False, output_format="bin"):
     """takes an infile and a function as arguments. process_function has to take a
