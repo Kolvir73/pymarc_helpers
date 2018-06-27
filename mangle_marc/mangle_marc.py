@@ -82,17 +82,12 @@ def write_to_file(reclist, filename="output", form="bin"):
                 out.write(record.as_marc())
     elif form == "xml":
         filename = filename + ".xml"
-        header = b"""<?xml version="1.0" encoding="UTF-8" ?>
-<?xml-stylesheet type="text/xsl" href="MARC21slim2HTML.xsl" ?>
-<collection xmlns="http://www.loc.gov/MARC21/slim"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.loc.gov/MARC21/slim
-    http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">"""
-        closer = b"</collection>"
+        writer = pymarc.XMLWriter(open(filename, "wb"))
 
-        with open(filename, "w", encoding="utf-8", errors="replace") as out:
-            for record in reclist:
-                out.write(pymarc.record_to_xml(record))
+        for record in reclist:
+            writer.write(record)
+
+        writer.close()
 
 def change_control_field(field, pos, value):
     """Changes values in a control field"""
