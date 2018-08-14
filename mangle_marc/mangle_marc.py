@@ -8,6 +8,7 @@ bindata = "tests/testdata/bindata.mrc"
 xmldata = "tests/testdata/xmldata.xml"
 
 def batch_to_list(infile):
+    """Take a filename of a marc-file and return a list of pymarc.Record objects."""
     record_list = []
     with open(infile, "rb") as fh:
         # check if its xml or binary
@@ -138,12 +139,24 @@ def remove_isbd(field):
     outlist = []
 
     for subfield in inlist:
-        if subfield.endswith(isbd_chars):
-            outlist.append(subfield[:-1].rstrip())
+        if subfield.rstrip().endswith(isbd_chars):
+            outlist.append(subfield.rstrip()[:-1])
         else:
             outlist.append(subfield)
 
     field.subfields = outlist
+
+def insert_nonfiling_chars(rec):
+    """Insert nonfiling characters in 245 $$a according to the second indicator
+and set the second indicator to 0."""
+    num_chars = int(rec["245"].indicators[1])
+    if num_chars is 0:
+        return
+    else:
+        sfa = rec["245"]["a"]
+        new_sfa = "<<" + sfa[:num_chars - 1] + ">>" + sfa[num_chars - 1:]
+        rec["245"]["a"] = new_sfa
+        rec["245"].indicators[1] = "0"
 
 def process_data(data, process_function, test=False, output_format="bin"):
     """takes an infile and a function as arguments. process_function has to take a
