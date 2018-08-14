@@ -2,6 +2,7 @@
 
 import pymarc
 import texttable as TT
+from mangle_marc.code_dicts import *
 
 # shortcuts for testing
 bindata = "tests/testdata/bindata.mrc"
@@ -157,6 +158,19 @@ and set the second indicator to 0."""
         new_sfa = "<<" + sfa[:num_chars - 1] + ">>" + sfa[num_chars - 1:]
         rec["245"]["a"] = new_sfa
         rec["245"].indicators[1] = "0"
+
+def relator_terms_to_codes(field):
+    """Replace $$e with a MARC relator term with a $$4 with the corresponding code."""
+
+    if field["e"]:
+        relator_term = field["e"].strip().lower()
+        if relator_term in relators_by_name.keys():
+            field.add_subfield("4", relators_by_name[relator_term])
+            field.delete_subfield("e")
+        else:
+            return
+    else:
+        return
 
 def process_data(data, process_function, test=False, output_format="bin"):
     """takes an infile and a function as arguments. process_function has to take a
