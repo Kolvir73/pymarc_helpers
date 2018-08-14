@@ -168,7 +168,7 @@ def relator_terms_to_codes(field):
             field.add_subfield("4", relators_by_name[relator_term])
             field.delete_subfield("e")
         else:
-            return
+            print(f"Unknown relator term: {relator_term}")
     else:
         return
 
