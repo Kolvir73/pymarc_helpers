@@ -167,6 +167,21 @@ def relator_terms_to_codes(field):
     else:
         return
 
+def language_041_from_008(record):
+    """Add a field 041##$$a with the language code from 008/35-37."""
+
+    lang = record["008"].data[35:38]
+    if not record["041"]:
+        record.add_ordered_field(
+            pymarc.Field(
+                tag = "041",
+                indicators = [" ", " "],
+                subfields = ["a", lang]
+            ))
+    else:
+        if not lang in record["041"].value():
+            record["041"].add_subfield("a", lang)
+
 def process_data(data, process_function, test=False, output_format="bin"):
     """takes an infile and a function as arguments. process_function has to take a
     record as input and return the modified record.
