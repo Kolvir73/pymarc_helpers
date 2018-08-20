@@ -182,6 +182,40 @@ def language_041_from_008(record):
         if not lang in record["041"].value():
             record["041"].add_subfield("a", lang)
 
+def country_044_from_008(record):
+    """Add a field 044##$$c with the ISO 3166-Codes derived from 008/15-17.
+
+All codes for USA, Canada and Great Britain are normalized to XD-US, XD-CA
+and XA-GB."""
+    country008 = record["008"].data[15:18].rstrip()
+    country044 = None
+    if len(country008) == 3:
+        if country008[-1] == "u":
+            country044 = "XD-US"
+        elif country008[-1] == "c":
+            country044 = "XD-CA"
+        elif country008[-1] == "k":
+            country044 = "XA-GB"
+    elif country008 in country_codes_marc2iso:
+        country044 = country_codes_marc2iso[country008]
+
+    if not record["044"]:
+        record.add_ordered_field(
+            pymarc.Field(
+                tag  = "044",
+                indicators = [" ", ""],
+                subfields = ["c", country044]
+            ))
+    elif country044[3:] in record["044"].subfields:
+        # change existing code to code with continental prefix
+        if not country044 in record["044"].subfields:
+            subfields = []
+            for subfield in record["044"].subfields:
+                subfields.append(subfield.replace(country044[3:], country044))
+            record["044"].subfields = subfields
+    else:
+        record["044"].add_subfield("c", country044)
+
 def process_data(data, process_function, test=False, output_format="bin"):
     """takes an infile and a function as arguments. process_function has to take a
     record as input and return the modified record.
