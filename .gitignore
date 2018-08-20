@@ -1,11 +1,13 @@
 tests/testoutput/
 t
 Pakete
+.directory
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache/
 
 # Distribution / packaging
 .Python
