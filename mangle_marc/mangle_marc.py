@@ -91,25 +91,20 @@ def write_to_file(reclist, filename="output", form="bin"):
 
         writer.close()
 
-def change_control_field(field, pos, value):
-    """Changes values in a control field"""
-    if field.is_control_field() == False:
-        print(f"{field} is not a control Field")
-        # TODO Exception
+def change_control_data(field, pos, value):
+    """Change values in control fields"""
+    if not field.is_control_field():
         return
 
-    field.data = change_control_data(field.data)
-
-def change_control_data(data, pos, value):
-    """Change some values in fixed-field-string"""
     positions = pos.split("-")
     if len(positions) > 2:
         # TODO exception
         return
     # TODO checken, ob len(data) == endpos - startpos + 1
-    startpos = positions[0]
-    endpos = positions[-1]
+    startpos = int(positions[0])
+    endpos = int(positions[-1])
     outdata = field.data[:startpos] + value + field.data[endpos + 1:]
+    field.data = outdata
 
 def sort_subfields(subfields):
     """Return a sorted list of subfields.
@@ -147,17 +142,17 @@ def remove_isbd(field):
 
     field.subfields = outlist
 
-def insert_nonfiling_chars(rec):
+def insert_nonfiling_chars(field):
     """Insert nonfiling characters in 245 $$a according to the second indicator
 and set the second indicator to 0."""
-    num_chars = int(rec["245"].indicators[1])
+    num_chars = int(field.indicators[1])
     if num_chars is 0:
         return
     else:
-        sfa = rec["245"]["a"]
+        sfa = field["a"]
         new_sfa = "<<" + sfa[:num_chars - 1] + ">>" + sfa[num_chars - 1:]
-        rec["245"]["a"] = new_sfa
-        rec["245"].indicators[1] = "0"
+        field["a"] = new_sfa
+        field.indicators[1] = "0"
 
 def relator_terms_to_codes(field):
     """Replace $$e with a MARC relator term with a $$4 with the corresponding code."""
