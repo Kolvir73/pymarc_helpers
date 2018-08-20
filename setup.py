@@ -4,14 +4,14 @@ except ImportError:
     from distutils.core import setup
 
 config = {
-    'description': "stuff to mangle MARC",
+    'description': "Helper functions for pymarc",
     'author': "Stefan Schuh",
     'author_email': "stefan.schuh@uni-graz.at",
     'version': "0.2",
     'install_requires': ['pytest', 'pymarc', 'texttable'],
-    'packages': ["mangle_marc"],
+    'packages': ["pymarc_helpers"],
     'scripts': [],
-    'name': 'mangle_marc',
+    'name': 'pymarc_helpers',
         }
 
 setup(**config)

@@ -2,7 +2,7 @@
 
 import pymarc
 import texttable as TT
-from mangle_marc.code_dicts import *
+from pymarc_helpers.code_dicts import *
 
 # shortcuts for testing
 bindata = "tests/testdata/bindata.mrc"
