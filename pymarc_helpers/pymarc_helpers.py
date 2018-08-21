@@ -201,22 +201,39 @@ def country_044_from_008(record):
     elif country008 in country_codes_marc2iso:
         country044 = country_codes_marc2iso[country008]
 
-    if not record["044"]:
-        record.add_ordered_field(
-            pymarc.Field(
-                tag="044",
-                indicators=[" ", ""],
-                subfields=["c", country044]
-            ))
-    elif country044[3:] in record["044"].subfields:
-        # change existing code to code with continental prefix
-        if not country044 in record["044"].subfields:
-            subfields = []
-            for subfield in record["044"].subfields:
-                subfields.append(subfield.replace(country044[3:], country044))
-            record["044"].subfields = subfields
-    else:
-        record["044"].add_subfield("c", country044)
+    if country044 is not None:
+        if not record["044"]:
+            record.add_ordered_field(
+                pymarc.Field(
+                    tag="044",
+                    indicators=[" ", ""],
+                    subfields=["c", country044]
+                ))
+        elif country044[3:] in record["044"].subfields:
+            # change existing code to code with continental prefix
+            if not country044 in record["044"].subfields:
+                subfields = []
+                for subfield in record["044"].subfields:
+                    subfields.append(subfield.replace(country044[3:], country044))
+                record["044"].subfields = subfields
+        else:
+            record["044"].add_subfield("c", country044)
+
+def translate_ill(rec):
+    """Translate 300 $$c to german."""
+    if rec["300"]["b"]:
+        ills = rec["300"]["b"].split(", ")
+        outlist = []
+        for ill in ills:
+            if ill.lower() in illustration_terms:
+                if illustration_terms[ill.lower()] is None:
+                    continue
+                else:
+                    outlist.append(illustration_terms[ill.lower()])
+            else:
+                outlist.append(ill)
+        outstring = ", ".join(outlist)
+        rec["300"]["b"] = outstring
 
 
 def process_data(data, process_function, test=False, output_format="bin"):
