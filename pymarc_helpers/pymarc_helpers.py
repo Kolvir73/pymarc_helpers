@@ -4,10 +4,6 @@ import pymarc
 import texttable as TT
 from pymarc_helpers.code_dicts import *
 
-# shortcuts for testing
-bindata = "tests/testdata/bindata.mrc"
-xmldata = "tests/testdata/xmldata.xml"
-
 def batch_to_list(infile):
     """Take a filename of a marc-file and return a list of pymarc.Record objects."""
     record_list = []
@@ -21,14 +17,14 @@ def batch_to_list(infile):
         else:
             # default: utf8_handling="strict"
             reader = pymarc.MARCReader(fh)
-
         for record in reader:
             record_list.append(record)
     return record_list
 
+
 def getstats(record_list, filename=None):
-    """Creates some rudimentary stats and writes them to a file. If no filename
-    is specified, the output is written to stdo.
+    """Create some rudimentary stats and write them to a file. If no filename
+    is specified, write the output to stdo.
 
     Output contains a count of records in a batch and a table with occurrences
     of fields and occurring subfields.
@@ -51,7 +47,8 @@ def getstats(record_list, filename=None):
                 fieldstat[field.tag] = fieldstat.get(field.tag, [0, []])
                 fieldstat[field.tag][0] += 1
             else:
-                tag = field.tag + field.indicators[0].replace(" ", "#") + field.indicators[1].replace(" ", "#")
+                tag = field.tag + field.indicators[0].replace(
+                    " ", "#") + field.indicators[1].replace(" ", "#")
                 fieldstat[tag] = fieldstat.get(tag, [0, []])
                 fieldstat[tag][0] += 1
                 subfields = field.subfields
@@ -63,7 +60,8 @@ def getstats(record_list, filename=None):
                         continue
 
     for tag in sorted(fieldstat):
-        field_table.add_row([tag, fieldstat[tag][0], sorted(fieldstat[tag][1])])
+        field_table.add_row(
+            [tag, fieldstat[tag][0], sorted(fieldstat[tag][1])])
 
     table.add_row(["No. of records", count])
 
@@ -75,6 +73,7 @@ def getstats(record_list, filename=None):
             fh.write("\n\n")
             fh.write(field_table.draw())
 
+
 def write_to_file(reclist, filename="output", form="bin"):
     """write records to file"""
     if form == "bin":
@@ -85,17 +84,15 @@ def write_to_file(reclist, filename="output", form="bin"):
     elif form == "xml":
         filename = filename + ".xml"
         writer = pymarc.XMLWriter(open(filename, "wb"))
-
         for record in reclist:
             writer.write(record)
-
         writer.close()
 
+
 def change_control_data(field, pos, value):
-    """Change values in control fields"""
+    """Change values in control fields."""
     if not field.is_control_field():
         return
-
     positions = pos.split("-")
     if len(positions) > 2:
         # TODO exception
@@ -105,6 +102,7 @@ def change_control_data(field, pos, value):
     endpos = int(positions[-1])
     outdata = field.data[:startpos] + value + field.data[endpos + 1:]
     field.data = outdata
+
 
 def sort_subfields(subfields):
     """Return a sorted list of subfields.
@@ -116,35 +114,35 @@ def sort_subfields(subfields):
     """
     sorted_subfields = []
     # make a list of (code, value)-tuples
-    tuple_list = [(subfields[i], subfields[i + 1]) for i in range(0, len(subfields), 2)]
-
+    tuple_list = [(subfields[i], subfields[i + 1])
+                  for i in range(0, len(subfields), 2)]
     # sort the tuple list and append to sorted subfields
     for code, value in sorted(tuple_list):
         sorted_subfields.append(code)
         sorted_subfields.append(value)
-
     return sorted_subfields
+
 
 def remove_isbd(field):
     """Remove ISBD-punctuation at the end of the subfields.
 
-    Takes a field object and changes it in-place"""
-
+    Takes a field object and changes it in-place.
+    """
     isbd_chars = (".", ",", ":", ";", "/")
     inlist = field.subfields
     outlist = []
-
     for subfield in inlist:
         if subfield.rstrip().endswith(isbd_chars):
             outlist.append(subfield.rstrip()[:-1])
         else:
             outlist.append(subfield)
-
     field.subfields = outlist
+
 
 def insert_nonfiling_chars(field):
     """Insert nonfiling characters in 245 $$a according to the second indicator
-and set the second indicator to 0."""
+    and set the second indicator to 0.
+    """
     num_chars = int(field.indicators[1])
     if num_chars is 0:
         return
@@ -154,9 +152,9 @@ and set the second indicator to 0."""
         field["a"] = new_sfa
         field.indicators[1] = "0"
 
+
 def relator_terms_to_codes(field):
     """Replace $$e with a MARC relator term with a $$4 with the corresponding code."""
-
     if field["e"]:
         relator_term = field["e"].strip().lower()
         if relator_term in relators_by_name.keys():
@@ -167,26 +165,30 @@ def relator_terms_to_codes(field):
     else:
         return
 
-def language_041_from_008(record):
-    """Add a field 041##$$a with the language code from 008/35-37."""
 
+def language_041_from_008(record):
+    """Add a field 041##$$a with the language code from 008/35-37. If 041
+    already exists, append subfield $$a with the code, if not already present.
+    """
     lang = record["008"].data[35:38]
     if not record["041"]:
         record.add_ordered_field(
             pymarc.Field(
-                tag = "041",
-                indicators = [" ", " "],
-                subfields = ["a", lang]
+                tag="041",
+                indicators=[" ", " "],
+                subfields=["a", lang]
             ))
     else:
         if not lang in record["041"].value():
             record["041"].add_subfield("a", lang)
 
+
 def country_044_from_008(record):
     """Add a field 044##$$c with the ISO 3166-Codes derived from 008/15-17.
 
-All codes for USA, Canada and Great Britain are normalized to XD-US, XD-CA
-and XA-GB."""
+    All codes for USA, Canada and Great Britain are normalized to XD-US, XD-CA
+    and XA-GB.
+    """
     country008 = record["008"].data[15:18].rstrip()
     country044 = None
     if len(country008) == 3:
@@ -202,9 +204,9 @@ and XA-GB."""
     if not record["044"]:
         record.add_ordered_field(
             pymarc.Field(
-                tag  = "044",
-                indicators = [" ", ""],
-                subfields = ["c", country044]
+                tag="044",
+                indicators=[" ", ""],
+                subfields=["c", country044]
             ))
     elif country044[3:] in record["044"].subfields:
         # change existing code to code with continental prefix
@@ -215,6 +217,7 @@ and XA-GB."""
             record["044"].subfields = subfields
     else:
         record["044"].add_subfield("c", country044)
+
 
 def process_data(data, process_function, test=False, output_format="bin"):
     """takes an infile and a function as arguments. process_function has to take a
@@ -250,4 +253,3 @@ def process_data(data, process_function, test=False, output_format="bin"):
     # stats after processing
     # FIXME Don't hardcode file extension here
     getstats(batch_to_list(outfile + ".mrc"), outstats)
-
