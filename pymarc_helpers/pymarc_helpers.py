@@ -4,6 +4,9 @@ import pymarc
 import texttable as TT
 from pymarc_helpers.code_dicts import *
 
+class WrongFieldError(Exception):
+    pass
+
 def batch_to_list(infile):
     """Take a filename of a marc-file and return a list of pymarc.Record objects."""
     record_list = []
@@ -133,7 +136,7 @@ def remove_isbd(field):
     outlist = []
     for subfield in inlist:
         if subfield.rstrip().endswith(isbd_chars):
-            outlist.append(subfield.rstrip()[:-1])
+            outlist.append(subfield.rstrip()[:-1].rstrip())
         else:
             outlist.append(subfield)
     field.subfields = outlist
@@ -142,7 +145,14 @@ def remove_isbd(field):
 def insert_nonfiling_chars(field):
     """Insert nonfiling characters in 245 $$a according to the second indicator
     and set the second indicator to 0.
+
+    Argument: a pymarc.Field object of a field 245.
     """
+
+    # raise an error if a field othen than 245 is passed to this function
+    if field.tag != "245":
+        raise WrongFieldError("Nonfiling chars can only be inserted in field 245.")
+
     num_chars = int(field.indicators[1])
     if num_chars is 0:
         return
