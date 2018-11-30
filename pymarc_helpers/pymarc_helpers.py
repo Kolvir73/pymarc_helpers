@@ -216,7 +216,7 @@ def country_044_from_008(record):
             record.add_ordered_field(
                 pymarc.Field(
                     tag="044",
-                    indicators=[" ", ""],
+                    indicators=[" ", " "],
                     subfields=["c", country044]
                 ))
         elif country044[3:] in record["044"].subfields:
