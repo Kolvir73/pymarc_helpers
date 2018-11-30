@@ -206,14 +206,7 @@ def country_044_from_008(record):
     """
     country008 = record["008"].data[15:18].rstrip()
     country044 = None
-    if len(country008) == 3:
-        if country008[-1] == "u":
-            country044 = "XD-US"
-        elif country008[-1] == "c":
-            country044 = "XD-CA"
-        elif country008[-1] == "k":
-            country044 = "XA-GB"
-    elif country008 in country_codes_marc2iso:
+    if country008 in country_codes_marc2iso:
         country044 = country_codes_marc2iso[country008]
 
     if country044 is not None:
