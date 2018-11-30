@@ -90,7 +90,12 @@ def write_to_file(reclist, filename="output", form="bin"):
         for record in reclist:
             writer.write(record)
         writer.close()
-
+    elif form == "text":
+        filename = filename + ".txt"
+        with open(filename, "wt") as out:
+            writer = pymarc.TextWriter(out)
+            for record in reclist:
+                writer.write(record)
 
 def change_control_data(field, pos, value):
     """Change values in control fields."""
