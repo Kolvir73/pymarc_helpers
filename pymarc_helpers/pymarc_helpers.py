@@ -3,6 +3,7 @@
 import pymarc
 import texttable as TT
 from pymarc_helpers.code_dicts import *
+import re
 
 class WrongFieldError(Exception):
     pass
@@ -140,7 +141,10 @@ def remove_isbd(field):
     inlist = field.subfields
     outlist = []
     for subfield in inlist:
-        if subfield.rstrip().endswith(isbd_chars):
+        if re.search(r'\W[A-Z]\.$', subfield) is not None:
+            # check if field ends with initials, if yes, leave it be
+            outlist.append(subfield)
+        elif subfield.rstrip().endswith(isbd_chars):
             outlist.append(subfield.rstrip()[:-1].rstrip())
         else:
             outlist.append(subfield)
