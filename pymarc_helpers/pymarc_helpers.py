@@ -138,7 +138,7 @@ def remove_isbd(field):
     Takes a field object and changes it in-place.
     """
     isbd_chars = (".", ",", ":", ";", "/")
-    inlist = field.subfields
+    inlist = [subfield.strip() for subfield in field.subfields]
     outlist = []
     for subfield in inlist:
         if re.search(r'\W[A-Z]\.$', subfield) is not None:
