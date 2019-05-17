@@ -167,7 +167,11 @@ def insert_nonfiling_chars(field):
         return
     else:
         sfa = field["a"]
-        new_sfa = "<<" + sfa[:num_chars - 1] + ">>" + sfa[num_chars - 1:]
+        if sfa[num_chars - 1] == " ":
+            new_sfa = "<<" + sfa[:num_chars - 1] + ">>" + sfa[num_chars - 1:]
+        else:
+            new_sfa = "<<" + sfa[:num_chars] + ">>" + sfa[num_chars:]
+
         field["a"] = new_sfa
         field.indicators[1] = "0"
 
