@@ -250,39 +250,3 @@ def translate_ill(rec):
                 outlist.append(ill)
         outstring = ", ".join(outlist)
         rec["300"]["b"] = outstring
-
-
-def process_data(data, process_function, test=False, output_format="bin"):
-    """takes an infile and a function as arguments. process_function has to take a
-    record as input and return the modified record.
-    """
-    outlist = []
-    # check if data is a list or a filename. If it's not a list,
-    # create one from the file
-    if type(data) is list:
-        reclist = data
-    else:
-        reclist = batch_to_list(data)
-
-    # shorten the list and cange outfile-names for testing
-    if test is True:
-        reclist = reclist[:10]
-        outfile = "TEST_loadfile"
-        instats = "TEST_infile_stats.txt"
-        outstats = "TEST_outfile_stats.txt"
-    else:
-        outfile = "loadfile"
-        instats = "infile_stats.txt"
-        outstats = "outfile_stats.txt"
-
-    # stats before processing
-    getstats(reclist, instats)
-    # process each record in the list and append it to outlist
-    for record in reclist:
-        outlist.append(process_function(record))
-
-    write_to_file(outlist, filename=outfile, form=output_format)
-
-    # stats after processing
-    # FIXME Don't hardcode file extension here
-    getstats(batch_to_list(outfile + ".mrc"), outstats)
