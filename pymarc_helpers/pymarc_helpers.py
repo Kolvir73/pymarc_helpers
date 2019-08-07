@@ -241,7 +241,7 @@ def get_copyright(rec):
         if field.indicators[1] == "4":
             try:
                 year = re.search(r'\d{4}', field.value()).group()
-            expect:
+            except:
                 pass
         else:
             pass
