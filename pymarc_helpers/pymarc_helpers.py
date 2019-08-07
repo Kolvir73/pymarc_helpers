@@ -161,7 +161,6 @@ def insert_nonfiling_chars(field):
     # raise an error if a field othen than 245 is passed to this function
     if field.tag != "245":
         raise WrongFieldError("Nonfiling chars can only be inserted in field 245.")
-
     num_chars = int(field.indicators[1])
     if num_chars is 0:
         return
@@ -234,6 +233,20 @@ def country_044_from_008(record):
                 record["044"].subfields = subfields
         else:
             record["044"].add_subfield("c", country044)
+            
+def get_copyright(rec):
+    """Elisa: 246 #4 is searched, if it exists."""
+
+    for field in rec.get_fields("264"):
+        if field.indicators[1] == "4":
+            try:
+                year = re.search(r'\d{4}', field.value()).group()
+            expect:
+                pass
+        else:
+            pass
+    return year
+
 
 def translate_ill(rec):
     """Translate 300 $$c to german."""
