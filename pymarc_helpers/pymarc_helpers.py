@@ -233,20 +233,16 @@ def country_044_from_008(record):
                 record["044"].subfields = subfields
         else:
             record["044"].add_subfield("c", country044)
-            
+
 def get_copyright(rec):
     """Elisa: 246 #4 is searched, if it exists. Funktion wurde getestet auf
     "normales" CJ, auf "zweistellige" Jahreszahl und auf kein vhd Feld 264"""
 
     for field in rec.get_fields("264"):
         if field.indicators[1] == "4":
-            try:
-                year = re.search(r'\d{4}', field.value()).group()
-                return year
-            except:
-                pass
-        else:
-            pass
+            year = re.search(r'\d{4}', field.value()).group()
+            return year
+
 
 
 def translate_ill(rec):
