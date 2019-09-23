@@ -9,8 +9,7 @@ class WrongFieldError(Exception):
     pass
 
 def batch_to_list(infile):
-    """Take a filename of a marc-file and return a list of pymarc.Record objects."""
-    record_list = []
+    """Take a filename of a marc-file (binary or xml)and return a list of pymarc.Record objects."""
     with open(infile, "rb") as fh:
         # check if its xml or binary
         firstline = fh.readline()
@@ -21,8 +20,8 @@ def batch_to_list(infile):
         else:
             # default: utf8_handling="strict"
             reader = pymarc.MARCReader(fh)
-        for record in reader:
-            record_list.append(record)
+
+        record_list = list(reader)
     return record_list
 
 
