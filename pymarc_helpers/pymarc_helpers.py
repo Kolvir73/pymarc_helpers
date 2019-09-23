@@ -5,8 +5,10 @@ import texttable as TT
 from pymarc_helpers.code_dicts import *
 import re
 
+
 class WrongFieldError(Exception):
     pass
+
 
 def batch_to_list(infile):
     """Take a filename of a marc-file (binary or xml)and return a list of pymarc.Record objects."""
@@ -97,6 +99,7 @@ def write_to_file(reclist, filename="output", form="bin"):
             for record in reclist:
                 writer.write(record)
 
+
 def change_control_data(field, pos, value):
     """Change values in control fields."""
     if not field.is_control_field():
@@ -159,7 +162,8 @@ def insert_nonfiling_chars(field):
 
     # raise an error if a field othen than 245 is passed to this function
     if field.tag != "245":
-        raise WrongFieldError("Nonfiling chars can only be inserted in field 245.")
+        raise WrongFieldError(
+            "Nonfiling chars can only be inserted in field 245.")
     num_chars = int(field.indicators[1])
     if num_chars is 0:
         return
@@ -228,10 +232,12 @@ def country_044_from_008(record):
             if not country044 in record["044"].subfields:
                 subfields = []
                 for subfield in record["044"].subfields:
-                    subfields.append(subfield.replace(country044[3:], country044))
+                    subfields.append(subfield.replace(
+                        country044[3:], country044))
                 record["044"].subfields = subfields
         else:
             record["044"].add_subfield("c", country044)
+
 
 def get_copyright(rec):
     """Elisa: 246 #4 is searched, if it exists. Funktion wurde getestet auf
@@ -241,7 +247,6 @@ def get_copyright(rec):
         if field.indicators[1] == "4":
             year = re.search(r'\d{4}', field.value()).group()
             return year
-
 
 
 def translate_ill(rec):
