@@ -285,4 +285,4 @@ def nonfiling_articles(field):
 
     for article in articles:
         if field["a"].startswith(article + " "):
-            field["a"] = f'<<{article}>> {field["a"][len(article):]}'
+            field["a"] = f'<<{article}>>{field["a"][len(article):]}'
