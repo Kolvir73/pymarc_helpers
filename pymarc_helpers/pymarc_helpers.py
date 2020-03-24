@@ -264,3 +264,25 @@ def translate_ill(rec):
                 outlist.append(ill)
         outstring = ", ".join(outlist)
         rec["300"]["b"] = outstring
+
+def nonfiling_articles(field):
+    """Insert nonfiling characters in 245 $$a according to a list of articles.
+
+    Argument: a pymarc.Field object of a field 245. Assumes capitalisation of the
+    first letter in the title. Changes the field in place
+    """
+
+    # raise an error if a field othen than 245 is passed to this function
+    if field.tag != "245":
+        raise WrongFieldError(
+            "Nonfiling chars can only be inserted in field 245.")
+
+    if field.indicators[1] != "0":
+        # if the indicator for nonfiling chars is used, use the appropriate
+        # funcion
+        insert_nonfiling_chars(field)
+        return
+
+    for article in articles:
+        if field["a"].startswith(article + " "):
+            field["a"] = f'<<{article}>> {field["a"][len(article):]}'

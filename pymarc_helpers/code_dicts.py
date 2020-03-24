@@ -628,3 +628,11 @@ illustration_terms = {
     "geanological tables": "genealogische Tafeln",
     "color maps": "Karten",
 }
+
+articles = (
+    # German
+    "Das", "Dem", "Den", "Der", "Des", "Die", "Ein", "Eine", "Einem", "Einen",
+    "Einer", "Eines",
+    # English
+    "A", "An", "D'", "De", "The", "Ye"
+)
