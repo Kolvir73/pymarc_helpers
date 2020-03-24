@@ -276,6 +276,7 @@ relators_by_name = {
     "writer of afterword": "wst", # not correct, but occurring in data
     "co-author": "aut", # not correct, but occurring in data
     "edited by": "edt", # not correct, but occurring in data
+    "hrsg": "edt", # not correct, but occurring in data
 }
 
 country_codes_marc2iso = {
