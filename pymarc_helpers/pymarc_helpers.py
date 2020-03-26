@@ -181,10 +181,15 @@ def insert_nonfiling_chars(field):
 def relator_terms_to_codes(field):
     """Replace $$e with a MARC relator term with a $$4 with the corresponding code."""
     if field["e"]:
+        existing_codes = [code for code in field.get_subfields("4")]
         relator_term = field["e"].strip().lower()
         if relator_term in relators_by_name.keys():
-            field.add_subfield("4", relators_by_name[relator_term])
-            field.delete_subfield("e")
+            code = relators_by_name[relator_term]
+            if code in existing_codes:
+                return
+            else:
+                field.add_subfield("4", relators_by_name[relator_term])
+                field.delete_subfield("e")
         else:
             print(f"Unknown relator term: {relator_term}")
     else:
