@@ -2,6 +2,7 @@ tests/testoutput/
 t
 Pakete
 .directory
+.venv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
