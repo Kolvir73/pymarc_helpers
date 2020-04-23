@@ -165,7 +165,7 @@ def insert_nonfiling_chars(field):
         raise WrongFieldError(
             "Nonfiling chars can only be inserted in field 245.")
     num_chars = int(field.indicators[1])
-    if num_chars is 0:
+    if num_chars == 0:
         return
     else:
         sfa = field["a"]
