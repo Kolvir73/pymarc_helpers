@@ -145,9 +145,9 @@ if args.run_all:
 
 if args.diff:
     diff_file = f"diff_{outfile}.html"
-    with open(diff_file, "w") as fh:
+    # need to specify encoding lest it fails on Windows
+    with open(diff_file, "w", encoding="utf-8", newline="") as fh:
         fh.write(diff(get_sample(inlist)))
-
     if sys.platform == "win32":
         os.startfile(diff_file)
     else:
