@@ -12,6 +12,11 @@ config = {
     'packages': ["pymarc_helpers"],
     'scripts': [],
     'name': 'pymarc_helpers',
+    'entry_points': {
+        "console_scripts": [
+            "process_marc=pymarc_helpers.cli:main"
+        ]
+    }
         }
 
 setup(**config)
