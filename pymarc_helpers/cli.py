@@ -205,7 +205,10 @@ def main():
 
     # name the output file
     if args.output_file:
-        output_file = args_output_file
+        outfile = args.output_file
+        extension_idx = outfile.find(".")
+        outfile_base = outfile[:extension_idx]
+
     else:
         input_file_tail = os.path.split(args.input_file)[-1]
         extension_idx = input_file_tail.find(".")
@@ -231,7 +234,7 @@ def main():
 
     if args.run_all:
         write_to_file([process_record(copy.deepcopy(rec)) for rec in inlist],
-                      outfile, args.output_format)
+                      outfile_base, args.output_format)
 
     if args.diff:
         diff_file = f"diff_{outfile}.html"
