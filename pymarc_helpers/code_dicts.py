@@ -128,7 +128,7 @@ relators_by_name = {
     "graphic technician": "grt",
     "host institution": "his",
     "honoree": "hnr",
-    "honouree": "hnr", # not correct, but happens
+    "honouree": "hnr",  # not correct, but happens
     "host": "hst",
     "illustrator": "ill",
     "illuminator": "ilu",
@@ -273,12 +273,18 @@ relators_by_name = {
     "writer of introduction": "win",
     "witness": "wit",
     "writer of preface": "wpr",
-    "writer of foreword": "wpr", # not correct, but occurring in data
+    "writer of foreword": "wpr",  # not correct, but occurring in data
     "writer of supplementary textual content": "wst",
-    "writer of afterword": "wst", # not correct, but occurring in data
-    "co-author": "aut", # not correct, but occurring in data
-    "edited by": "edt", # not correct, but occurring in data
-    "hrsg": "edt", # not correct, but occurring in data
+    "writer of afterword": "wst",  # not correct, but occurring in data
+    "co-author": "aut",  # not correct, but occurring in data
+    "edited by": "edt",  # not correct, but occurring in data
+    "hrsg": "edt",  # not correct, but occurring in data
+    "verlag": "pbl",  # not correct, but occurring in data
+    "verfasser": "aut",  # not correct, but occurring in data
+    "mitwirkender": "ctb",  # not correct, but occurring in data
+    "herausgeber": "edt",  # not correct, but occurring in data
+    "sonstige": "oth",  # not correct, but occurring in data
+    "verfasser eines geleitworts": "wst"  # not correct, but occurring in data
 }
 
 country_codes_marc2iso = {
@@ -634,8 +640,22 @@ illustration_terms = {
 
 articles = (
     # German
-    "Das", "Dem", "Den", "Der", "Des", "Die", "Ein", "Eine", "Einem", "Einen",
-    "Einer", "Eines",
+    "Das",
+    "Dem",
+    "Den",
+    "Der",
+    "Des",
+    "Die",
+    "Ein",
+    "Eine",
+    "Einem",
+    "Einen",
+    "Einer",
+    "Eines",
     # English
-    "A", "An", "D'", "De", "The", "Ye"
-)
+    "A",
+    "An",
+    "D'",
+    "De",
+    "The",
+    "Ye")
