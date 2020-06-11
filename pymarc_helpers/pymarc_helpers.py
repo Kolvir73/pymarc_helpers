@@ -17,7 +17,7 @@ def batch_to_list(infile):
         firstline = fh.readline()
         # set the pointer back to the beginning
         fh.seek(0)
-        if firstline.startswith(b"<?xml version"):
+        if b"<?xml version" in firstline:
             reader = pymarc.parse_xml_to_array(fh)
         else:
             # default: utf8_handling="strict"
@@ -66,7 +66,8 @@ def getstats(record_list, filename=None):
 
     for tag in sorted(fieldstat):
         field_table.add_row(
-            [tag, fieldstat[tag][0], sorted(fieldstat[tag][1])])
+            [tag, fieldstat[tag][0],
+             sorted(fieldstat[tag][1])])
 
     table.add_row(["No. of records", count])
 
@@ -203,11 +204,9 @@ def language_041_from_008(record):
     lang = record["008"].data[35:38]
     if not record["041"]:
         record.add_ordered_field(
-            pymarc.Field(
-                tag="041",
-                indicators=[" ", " "],
-                subfields=["a", lang]
-            ))
+            pymarc.Field(tag="041",
+                         indicators=[" ", " "],
+                         subfields=["a", lang]))
     else:
         if not lang in record["041"].value():
             record["041"].add_subfield("a", lang)
@@ -227,18 +226,16 @@ def country_044_from_008(record):
     if country044 is not None:
         if not record["044"]:
             record.add_ordered_field(
-                pymarc.Field(
-                    tag="044",
-                    indicators=[" ", " "],
-                    subfields=["c", country044]
-                ))
+                pymarc.Field(tag="044",
+                             indicators=[" ", " "],
+                             subfields=["c", country044]))
         elif country044[3:] in record["044"].subfields:
             # change existing code to code with continental prefix
             if not country044 in record["044"].subfields:
                 subfields = []
                 for subfield in record["044"].subfields:
-                    subfields.append(subfield.replace(
-                        country044[3:], country044))
+                    subfields.append(
+                        subfield.replace(country044[3:], country044))
                 record["044"].subfields = subfields
         else:
             record["044"].add_subfield("c", country044)
@@ -269,6 +266,7 @@ def translate_ill(rec):
                 outlist.append(ill)
         outstring = ", ".join(outlist)
         rec["300"]["b"] = outstring
+
 
 def nonfiling_articles(field):
     """Insert nonfiling characters in 245 $$a according to a list of articles.
