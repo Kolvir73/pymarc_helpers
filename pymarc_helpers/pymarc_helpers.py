@@ -187,6 +187,7 @@ def relator_terms_to_codes(field):
         if relator_term in relators_by_name.keys():
             code = relators_by_name[relator_term]
             if code in existing_codes:
+                field.delete_subfield("e")
                 return
             else:
                 field.add_subfield("4", relators_by_name[relator_term])
