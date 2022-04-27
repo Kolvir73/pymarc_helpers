@@ -3,7 +3,6 @@ import pytest
 import pymarc_helpers as ph
 import pymarc
 
-
 def test_batch_to_list():
     fromxml = ph.batch_to_list("tests/testdata/xmldata_short.xml")
     frombin = ph.batch_to_list("tests/testdata/bindata_short.mrc")
@@ -14,24 +13,35 @@ def test_batch_to_list():
     assert len(frombin) == 72
 
 
-def test_getstats():
-    pass
-
-
-def test_write_to_file():
-    pass
-
-
 def test_change_control_data():
     pass
 
 
 def test_sort_subfields():
-    pass
+    unsorted_field = pymarc.Field(
+        tag="999",
+        indicators=["1", " "],
+        subfields=["x", "Subfield x", "a", "Subfield a1", "4", "Subfield 4", "a", "Subfield a2"]
+        )
 
+    assert ph.sort_subfields(unsorted_field.subfields) == ["4", "Subfield 4", "a", "Subfield a1", "a", "Subfield a2", "x", "Subfield x"]
 
 def test_remove_isbd():
-    pass
+    # normal ISBD
+    isbd_field = pymarc.Field(
+        tag="245",
+        indicators=["1", "0"],
+        subfields=["a", "Haupttitel :", "b",
+                   "Titelzusatz = Paralleltitel : Titelzusatz /",
+                   "c", "Verantwortlichkeitsangabe"]
+    )
+
+    ph.remove_isbd(isbd_field)
+    assert isbd_field.subfields == ["a", "Haupttitel", "b",
+                   "Titelzusatz = Paralleltitel : Titelzusatz",
+                   "c", "Verantwortlichkeitsangabe"]
+
+    # TODO add corner cases
 
 
 def test_insert_nonfiling_chars():
