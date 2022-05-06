@@ -227,17 +227,17 @@ def main():
         # get the sample
         sample = get_sample(inlist)
         # write the sample to files
-        write_to_file([rec for rec in sample], f"sample_{outfile_base}_raw",
+        write_to_file([rec for rec in sample], f"{outfile_base}_sample_raw",
                       "text")
         write_to_file([process_record(rec) for rec in sample],
-                      f"sample_{outfile_base}_cooked", "text")
+                      f"{outfile_base}_sample_cooked", "text")
 
     if args.run_all:
         write_to_file([process_record(copy.deepcopy(rec)) for rec in inlist],
                       outfile_base, args.output_format)
 
     if args.diff:
-        diff_file = f"diff_{outfile}.html"
+        diff_file = f"{outfile_base}_diff.html"
         # need to specify encoding lest it fails on Windows
         with open(diff_file, "w", encoding="utf-8", newline="") as fh:
             fh.write(diff(get_sample(inlist)))
