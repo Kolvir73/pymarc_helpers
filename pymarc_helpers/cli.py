@@ -139,14 +139,9 @@ if args.script_file:
     script = run_path(args.script_file)
     process_record = script["process_record"]
 else:
-    print("No processing script specified. Using Dummy-Function.")
+    print("No processing script specified. Using empty Dummy-Function.")
 
     def process_record(rec):
-        rec.add_ordered_field(
-            pymarc.Field(
-                tag="500",
-                indicators=[" ", " "],
-                subfields=["a", f"Processed by pymarc_helpers/{__version__}"]))
         return rec
 
 
