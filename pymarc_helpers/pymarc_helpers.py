@@ -48,7 +48,8 @@ def getstats(record_list, filename=None):
     for record in record_list:
         count += 1
         for field in record:
-            if field.is_control_field():
+            # FMT and LDR are found in Aleph-Exports
+            if field.is_control_field() or field.tag in ("FMT", "LDR"):
                 fieldstat[field.tag] = fieldstat.get(field.tag, [0, []])
                 fieldstat[field.tag][0] += 1
             else:
