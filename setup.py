@@ -8,7 +8,7 @@ config = {
     'author': "Stefan Schuh",
     'author_email': "stefan.schuh@uni-graz.at",
     'version': "0.2",
-    'install_requires': ['pytest', 'pymarc', 'texttable'],
+    'install_requires': ['pytest', 'pymarc == 4.2.1', 'texttable'],
     'packages': ["pymarc_helpers"],
     'scripts': [],
     'name': 'pymarc_helpers',
